@@ -94,7 +94,6 @@ Once these have been installed the DNS files must be configured. These files inc
 <p align="center" width="100%"><img width="33%" src="images/zonefile.png"></p>
 
 Once these files are configured the DNS service needs to be restarted with the command:<br>
-`sudo systemctl restart bind9.service` <br>
 To check the status of the service and make certain it is running use: <br>
 `sudo systemctl status bind9.service` <br>
 At this point, the client should be able to use the DNS server to `nslookup` the addresses in the configured zone (ie: ns.sysninja).
@@ -103,11 +102,41 @@ At this point, the client should be able to use the DNS server to `nslookup` the
 
 ## DHCP
 
+Setting up DHCP to automatically assign IP addresses to clients on the internal network is the next step. To do this the following should be installed: <br>
+`sudo apt-get install isc-dhcp-server` <br> <br>
+After installation, the DHCP file must be configured: <br>
+`sudo nano /etc/dhcp/dhcpd.conf` <br> <br>
+This configuration is copied in text format [here](dhcp/dhcp.txt) and should look like the following image.
+
+<p align="center" width="100%"><img width="33%" src="images/dhcp.png"></p>
+
+This outlines the network the clients will be on and the range of IP addresses that will be handed out by the DHCP service. <br> <br>
+
+After the configuration of the network and range is complete, the DHCP server will likely need to be configured so it knows which interface it will be using. This change will be entered into the `/etc/default/isc-dhcp-server` file. In this case, the interface was ens38 as seen below.
+
+<p align="center" width="100%"><img width="33%" src="images/dhcpint.png"></p>
+
+The DHCP service should be restarted once it has been configured using the command: <br>
+`sudo systemctl restart isc-dhcp-server.service` <br> <br>
+
+The status can be checked via: <br>
+`sudo systemctl status isc-dhcp-server.service` <br> <br>
+
+The client should now be getting an IP address from the server's DHCP!
+
+*****************
+
 ## Uncomplicated Firewall
+
+*****************
 
 ## IP Masquerading
 
+*****************
+
 ## Squid Proxy Server
+
+*****************
 
 saved for later use
 <p align="center" width="100%"><img width="33%" src="images/putty2.png"></p>
