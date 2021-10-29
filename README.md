@@ -5,6 +5,7 @@
 ## About
 
 This is a basic setup for a Ubuntu 20.04 or 21.10 server. More information on Ubuntu Server can be found at [Ubuntu's Website](https://ubuntu.com/server). This particular build was completed on VMWare Workstation Pro.
+*****************
 
 ## Server Services
 
@@ -17,10 +18,12 @@ This guide will go through:
 - Creating a basic firewall using Linux's Uncomplicated Firewall (ufw)
 - Setting up IP masquerading from an internal network to an external network
 - Installing and configuring a proxy service using squid
+*****************
 
 ## Requirements
 
 A Ubuntu 20.04 or 21.10 server with two network adapters (one for an internal network and one for an external network) and a client machine on the internal network will be required.
+*****************
 
 ## SSH Key 
 
@@ -47,6 +50,7 @@ An SSH session should be opened to the Ubuntu server at this point. Once connect
 4. Copy the public key into this file.
 
 The key should now be authorized by the server to authenticate SSH sessions from this client.
+*****************
 
 ## NTP Time Synchronization
 To ensure that the server's log times are correct the system time should be synchronized with an NTP server. To set this up:
@@ -54,17 +58,48 @@ To ensure that the server's log times are correct the system time should be sync
   
 If desired, the configuration file can be edited to change which NTP servers are being used. This can be done in the `/etc/chrony/chrony.conf` file. Should this file be changed the service must be restarted using: <br>
 `sudo systemctl restart chrony.service`
+*****************
 
 ## Static Internal IP Address
+
 The interface which the static IP address will be assigned to must be identified. The `ip a` command will list the interfaces attached to the Ubuntu server. In this case, the two interfaces were ens33 which was the machine's external network interface and ens38 which needed to be set up as the internal network interface. This is done by editing the netplan configuration file. <br>
 
 `sudo nano /etc/netplan/00-installer-config.yaml` <br>
 
-The text file of this configuration is located [here](/static/00-installer-config.txt) and should look like the image below once entered. <br>
+The text file of this configuration is located [here](static/00-installer-config.txt) and should look like the image below once entered. <br>
 
 <p align="center" width="100%"><img width="33%" src="images/netplan.png"></p>
 
+Once this file has been properly configured it must be applied to the system via `sudo netplan apply`
+*****************
+
 ## DNS
+To get a Domain Name server installed on Ubuntu two installs are recommended:
+- `sudo apt install bind9`
+- `sudo apt install dnsutils` 
+
+Once these have been installed the DNS files must be configured. These files include:
+
+- the `/etc/bind/named.conf` file (which is left in its default state)
+- the `/etc/bind/named.conf.options` file which is edited to forward requests to an external DNS server (Google in this case at 8.8.8.8) <br>
+
+<p align="center" width="100%"><img width="33%" src="images/dnsforward.png"></p>
+
+- the `/etc/bind/named.conf.local` file is where your local zone information should be added. The text file is [here](dns/zone.txt) and should look like the example below. <br>
+
+<p align="center" width="100%"><img width="33%" src="images/zone.png"></p>
+
+- the zone file itself. To create this file the command `sudo cp /etc/bind/db.local /etc/bind/db.sysninja` is used to copy the local zone file to a custom zone file (in this case "sysninja"). Once created, this file (`/etc/bind/db.sysninja`) needs to be configured for the new zone. Each time this file is changed, the serial number located on line 6 should be changed as well. The text for the configuration used on this machine is [here](dns/zonefile.txt) and should look like the image below when completed.
+
+<p align="center" width="100%"><img width="33%" src="images/zonefile.png"></p>
+
+Once these files are configured the DNS service needs to be restarted with the command:<br>
+`sudo systemctl restart bind9.service` <br>
+To check the status of the service and make certain it is running use: <br>
+`sudo systemctl status bind9.service` <br>
+At this point, the client should be able to use the DNS server to `nslookup` the addresses in the configured zone (ie: ns.sysninja).
+
+*****************
 
 ## DHCP
 
