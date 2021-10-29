@@ -1,0 +1,4 @@
+zone "sysninja" {
+	type master;
+	file "/etc/bind/db.sysninja";
+};
