@@ -48,8 +48,12 @@ An SSH session should be opened to the Ubuntu server at this point. Once connect
 
 The key should now be authorized by the server to authenticate SSH sessions from this client.
 
-
 ## NTP Time Synchronization
+To ensure that the server's log times are correct the system time should be synchronized with an NTP server. To set this up:
+- Install chrony via the command `sudo apt install chrony` <br>
+  
+If desired, the configuration file can be edited to change which NTP servers are being used. This can be done in the `/etc/chrony/chrony.conf` file. Should this file be changed the service must be restarted using: <br>
+`sudo systemctl restart chrony.service`
 
 ## Static Internal IP Address
 
