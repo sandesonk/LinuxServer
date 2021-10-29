@@ -56,6 +56,13 @@ If desired, the configuration file can be edited to change which NTP servers are
 `sudo systemctl restart chrony.service`
 
 ## Static Internal IP Address
+The interface which the static IP address will be assigned to must be identified. The `ip a` command will list the interfaces attached to the Ubuntu server. In this case, the two interfaces were ens33 which was the machine's external network interface and ens38 which needed to be set up as the internal network interface. This is done by editing the netplan configuration file. <br>
+
+`sudo nano /etc/netplan/00-installer-config.yaml` <br>
+
+The text file of this configuration is located [here](/static/00-installer-config.txt) and should look like the image below once entered. <br>
+
+<p align="center" width="100%"><img width="33%" src="images/netplan.png"></p>
 
 ## DNS
 
@@ -68,9 +75,7 @@ If desired, the configuration file can be edited to change which NTP servers are
 ## Squid Proxy Server
 
 saved for later use
-<p align="center" width="100%">
-    <img width="33%" src="images/putty2.png">
-</p>
+<p align="center" width="100%"><img width="33%" src="images/putty2.png"></p>
 
 ## MD file
 
