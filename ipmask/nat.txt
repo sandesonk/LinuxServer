@@ -1,0 +1,8 @@
+#nat table rules
+*nat
+:POSTROUTING ACCEPT [0:0]
+
+-A POSTROUTING -s 10.0.0.0/24 -o ens33 -j MASQUERADE
+
+#don't delete the "COMMIT" line or these rules won't be processed
+COMMIT
