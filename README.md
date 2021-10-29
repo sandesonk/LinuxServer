@@ -50,6 +50,8 @@ An SSH session should be opened to the Ubuntu server at this point. Once connect
 4. Copy the public key into this file.
 
 The key should now be authorized by the server to authenticate SSH sessions from this client.
+
+More information on SSH keys and some troubleshooting tips can be found [here](https://www.ssh.com/academy/ssh/copy-id).
 *****************
 
 ## NTP Time Synchronization
@@ -58,6 +60,8 @@ To ensure that the server's log times are correct the system time should be sync
   
 If desired, the configuration file can be edited to change which NTP servers are being used. This can be done in the `/etc/chrony/chrony.conf` file. Should this file be changed the service must be restarted using: <br>
 `sudo systemctl restart chrony.service`
+
+More information and examples of chrony configurations can be found [here](https://chrony.tuxfamily.org/doc/4.1/chrony.conf.html#examples).
 *****************
 
 ## Static Internal IP Address
@@ -71,6 +75,9 @@ The text file of this configuration is located [here](static/00-installer-config
 <p align="center" width="100%"><img width="33%" src="images/netplan.png"></p>
 
 Once this file has been properly configured it must be applied to the system via `sudo netplan apply`
+
+More information on network plans can be found on the [Ubuntu website](https://ubuntu.com/server/docs/network-configuration).
+
 *****************
 
 ## DNS
@@ -99,6 +106,8 @@ To check the status of the service and make certain it is running use: <br>
 `sudo systemctl status bind9.service` <br> <br>
 At this point, the client should be able to use the DNS server to `nslookup` the addresses in the configured zone (ie: ns.sysninja).
 
+More information can be found at [Ubuntu](https://ubuntu.com/server/docs/service-domain-name-service-dns). To check out best practices when it comes to DNS servers (which are recommended to be on their own server) click [here](https://kb.isc.org/docs/bind-best-practices-recursive).
+
 *****************
 
 ## DHCP
@@ -124,6 +133,8 @@ The status can be checked via: <br>
 `sudo systemctl status isc-dhcp-server.service` <br> <br>
 
 The client should now be getting an IP address from the server's DHCP!
+
+Having DHCP trouble? Check this [Ubuntu Forum post](https://help.ubuntu.com/community/isc-dhcp-server) for help.
 
 *****************
 
@@ -159,7 +170,23 @@ IP masquerading allows internal network traffic to be translated into addresses 
 
 After this has been edited, the file `/etc/ufw/sysctl.conf` will need to be changed. Two comments need to active:
 - net/ipv4/ip_forward=1
-- net/ipv6/conf/default/forwarding=1 
+- net/ipv6/conf/default/forwarding=1 <br>
+
+Which will leave this configuration resembling the image below. 
+
+<p align="center" width="100%"><img width="33%" src="images/ip2.png"></p>
+
+Now that packets are allowed to be forwarded in both IPv4 and IPv6 it is time to create the rule that will direct the packets from one network to the next. This rule should be entered in the top of the `/etc/ufw/before.rules` file. In this case, the packets were traveling from a 10.0.0.0/24 network out to the external network through interface ens33. The image below displays the NAT table rule used for this server while the text version can be found [here](ipmask/nat.txt).
+
+<p align="center" width="100%"><img width="33%" src="images/nat.png"></p>
+
+This rule is an iptables rule which means it is not persistant should the service be interrupted. To make it persistant the command
+`sudo apt-get install iptables -persistant` should be used. Once this rule has been added the firewall should be turned off and on again via: <br>
+`sudo ufw disable && sudo ufw enable` <br>
+
+The clients should now be able to access the internet!
+
+For the Ubuntu instructions on firewalls and IP masquerading click [here](https://ubuntu.com/server/docs/security-firewall).
 
 *****************
 
