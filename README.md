@@ -96,6 +96,7 @@ Once these have been installed the DNS files must be configured. These files inc
 Once these files are configured the DNS service needs to be restarted with the command:<br>
 To check the status of the service and make certain it is running use: <br>
 `sudo systemctl status bind9.service` <br>
+`sudo systemctl status bind9.service` <br> <br>
 At this point, the client should be able to use the DNS server to `nslookup` the addresses in the configured zone (ie: ns.sysninja).
 
 *****************
