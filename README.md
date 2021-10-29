@@ -129,9 +129,37 @@ The client should now be getting an IP address from the server's DHCP!
 
 ## Uncomplicated Firewall
 
+Linux has built in firewall capabilities which can be enabled with the command: <br>
+`sudo ufw enable` <br>
+
+Once this has been enabled firewall rules can be added to control the traffic in and out of the server. Examples of these rules can be found below:
+
+`sudo ufw allow 53`
+
+`sudo ufw allow http`
+
+`sudo ufw deny from 10.0.0.0/24 to any port 22`
+
+`sudo allow ssh`
+
+Order matters when creating these rules! The command below can be used to see which rules have been created and their order:
+
+`sudo ufw status` <br>
+This will give an output similar to the one seen below:
+
+<p align="center" width="100%"><img width="33%" src="images/ufw.png"></p>
+
 *****************
 
 ## IP Masquerading
+
+IP masquerading allows internal network traffic to be translated into addresses that are understood outside of their network. To set this up, the `/etc/default/ufw` file needs to be edited to ACCEPT for the default forwarding policy as shown in the image below.
+
+<p align="center" width="100%"><img width="33%" src="images/ip1.png"></p>
+
+After this has been edited, the file `/etc/ufw/sysctl.conf` will need to be changed. Two comments need to active:
+- net/ipv4/ip_forward=1
+- net/ipv6/conf/default/forwarding=1 
 
 *****************
 
