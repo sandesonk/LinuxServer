@@ -94,6 +94,7 @@ Once these have been installed the DNS files must be configured. These files inc
 <p align="center" width="100%"><img width="33%" src="images/zonefile.png"></p>
 
 Once these files are configured the DNS service needs to be restarted with the command:<br>
+`sudo systemctl restart bind9.service` <br> <br>
 To check the status of the service and make certain it is running use: <br>
 `sudo systemctl status bind9.service` <br>
 `sudo systemctl status bind9.service` <br> <br>
