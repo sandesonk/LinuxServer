@@ -192,12 +192,46 @@ For the Ubuntu instructions on firewalls and IP masquerading click [here](https:
 
 ## Squid Proxy Server
 
+Setting up a proxy server between the clients on the internal network and the external network will allow for more traffic control. In this case, a proxy server was used to block access to a website from the client computer. To do this squid should be installed via: <br>
+
+`sudo apt install squid` <br>
+
+Squid defaults to port 3128 which means this port needs to have the desired traffic redirected to it. This is done by the command <br>
+
+`sudo iptables -t nat -I PREROUTING -p tcp -s 10.0.0.0/24 --dport 80 -j REDIRECT --to-port 3128` <br>
+As with the other iptable rule, this will not be persistant until the command `sudo apt-get install iptables -persistant` is run. <br>
+
+To block a website it must first have its URL added to the `/etc/squid/denied-sites.squid`. 
+
+The size of the squid configuration file is quite large. It is suggested to make a copy of the default configuration in case something goes awry via <br>
+
+`sudo cp /etc/squid/squid.conf /etc/squid/squid.conf.original` <br>
+
+The configuration file `/etc/squid/squid.conf` can then be edited. The default ACLs should be checked to ensure that they allow the networks as desired. The allowed network defaults were of wider networks than needed but worked for this purpose and were left alone. Below these ACLs a rule should be added to deny the websites listed in the file above. This ACL should be: <br>
+
+`acl deniedsites dstdomain "/etc/squid/denied-sites.squid"` <br>
+
+The list of ACLs from this setup is shown below.
+<p align="center" width="100%"><img width="33%" src="images/squid.png"></p>
+
+To block the http traffic from these sites the following two lines were added farther down in the configuration file: <br>
+`#Deny access to blocked sites` <br>
+`http_access deny deniedsites`
+
+This is shown in the image below:
+<p align="center" width="100%"><img width="33%" src="images/squid2.png"></p>
+
+Finally, the option to change which port the proxy server is using is located farther down in this configuration file. In this case, it was left at the default port 3128. If this is changed, it must also be changed in the iptables rule that was set above. <br>
+
+This port also must be allowed through the firewall. To add this allowance the rule below must be added. <br>
+`sudo ufw allow 3128` <br>
+
+Once the configuration is complete, squid must be restarted. <br>
+
+`sudo systemctl restart squid.service` <br>
+
+The client machine should no longer be able to access the websites listed in the deniedsites file and the proxy server should be creating traffic logs.
+
+More information about Squid can be found on the [Ubuntu website](https://ubuntu.com/server/docs/proxy-servers-squid).
+
 *****************
-
-saved for later use
-<p align="center" width="100%"><img width="33%" src="images/putty2.png"></p>
-
-## MD file
-
-
- 
