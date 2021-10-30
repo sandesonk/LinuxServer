@@ -197,8 +197,8 @@ Setting up a proxy server between the clients on the internal network and the ex
 `sudo apt install squid` <br>
 
 Squid defaults to port 3128 which means this port needs to have the desired traffic redirected to it. This is done by the command <br>
-
 `sudo iptables -t nat -I PREROUTING -p tcp -s 10.0.0.0/24 --dport 80 -j REDIRECT --to-port 3128` <br>
+
 As with the other iptable rule, this will not be persistant until the command `sudo apt-get install iptables -persistant` is run. <br>
 
 To block a website it must first have its URL added to the `/etc/squid/denied-sites.squid`. 
@@ -212,18 +212,19 @@ The configuration file `/etc/squid/squid.conf` can then be edited. The default A
 `acl deniedsites dstdomain "/etc/squid/denied-sites.squid"` <br>
 
 The list of ACLs from this setup is shown below.
-<p align="center" width="100%"><img width="33%" src="images/squid.png"></p>
+<p align="center" width="100%"><img width="33%" src="images/squid.PNG"></p>
 
 To block the http traffic from these sites the following two lines were added farther down in the configuration file: <br>
 `#Deny access to blocked sites` <br>
 `http_access deny deniedsites`
 
 This is shown in the image below:
-<p align="center" width="100%"><img width="33%" src="images/squid2.png"></p>
+<p align="center" width="100%"><img width="33%" src="images/squid2.PNG"></p>
 
 Finally, the option to change which port the proxy server is using is located farther down in this configuration file. In this case, it was left at the default port 3128. If this is changed, it must also be changed in the iptables rule that was set above. <br>
 
 This port also must be allowed through the firewall. To add this allowance the rule below must be added. <br>
+
 `sudo ufw allow 3128` <br>
 
 Once the configuration is complete, squid must be restarted. <br>
