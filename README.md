@@ -181,7 +181,7 @@ Now that packets are allowed to be forwarded in both IPv4 and IPv6 it is time to
 <p align="center" width="100%"><img width="33%" src="images/nat.png"></p>
 
 This rule is an iptables rule which means it is not persistant should the service be interrupted. To make it persistant the command
-`sudo apt-get install iptables -persistant` should be used. Once this rule has been added the firewall should be turned off and on again via: <br>
+`sudo apt-get install iptables-persistent` should be used. Once this rule has been added the firewall should be turned off and on again via: <br>
 `sudo ufw disable && sudo ufw enable` <br>
 
 The clients should now be able to access the internet!
@@ -199,7 +199,7 @@ Setting up a proxy server between the clients on the internal network and the ex
 Squid defaults to port 3128 which means this port needs to have the desired traffic redirected to it. This is done by the command <br>
 `sudo iptables -t nat -I PREROUTING -p tcp -s 10.0.0.0/24 --dport 80 -j REDIRECT --to-port 3128` <br>
 
-As with the other iptable rule, this will not be persistant until the command `sudo apt-get install iptables -persistant` is run. <br>
+As with the other iptable rule, this will not be persistant until the command `sudo apt-get install iptables-persistent` is run. <br>
 
 To block a website it must first have its URL added to the `/etc/squid/denied-sites.squid`. 
 
